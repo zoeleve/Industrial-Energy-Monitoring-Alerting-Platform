@@ -1,6 +1,7 @@
 package com.energyplatform.device;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,42 +13,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/devices")
 public class DeviceController {
 
-    private final DeviceService deviceService;
+  private final DeviceService deviceService;
 
-    public DeviceController(DeviceService deviceService) {
-        this.deviceService = deviceService;
-    }
+  public DeviceController(DeviceService deviceService) {
+    this.deviceService = deviceService;
+  }
 
-    @PostMapping
-    public ResponseEntity<DeviceResponse> create(@Valid @RequestBody DeviceRequest request) {
-        DeviceResponse response = deviceService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+  @PostMapping
+  public ResponseEntity<DeviceResponse> create(@Valid @RequestBody DeviceRequest request) {
+    DeviceResponse response = deviceService.create(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
 
-    @GetMapping
-    public List<DeviceResponse> findAll() {
-        return deviceService.findAll();
-    }
+  @GetMapping
+  public List<DeviceResponse> findAll() {
+    return deviceService.findAll();
+  }
 
-    @GetMapping("/{id}")
-    public DeviceResponse findById(@PathVariable Long id) {
-        return deviceService.findById(id);
-    }
+  @GetMapping("/{id}")
+  public DeviceResponse findById(@PathVariable Long id) {
+    return deviceService.findById(id);
+  }
 
-    @PutMapping("/{id}")
-    public DeviceResponse update(@PathVariable Long id, @Valid @RequestBody DeviceRequest request) {
-        return deviceService.update(id, request);
-    }
+  @PutMapping("/{id}")
+  public DeviceResponse update(@PathVariable Long id, @Valid @RequestBody DeviceRequest request) {
+    return deviceService.update(id, request);
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        deviceService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    deviceService.delete(id);
+    return ResponseEntity.noContent().build();
+  }
 }
