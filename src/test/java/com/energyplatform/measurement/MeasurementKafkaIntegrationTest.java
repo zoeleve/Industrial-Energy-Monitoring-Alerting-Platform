@@ -3,16 +3,19 @@ package com.energyplatform.measurement;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
+import com.energyplatform.TestcontainersConfiguration;
 import com.energyplatform.common.config.KafkaTopicConfig;
 import com.energyplatform.device.Device;
 import com.energyplatform.device.DeviceRepository;
 import com.energyplatform.device.DeviceStatus;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 
 /**
@@ -22,6 +25,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
  */
 @SpringBootTest(properties = "spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}")
 @EmbeddedKafka(partitions = 1, topics = KafkaTopicConfig.MEASUREMENTS_TOPIC)
+@Import(TestcontainersConfiguration.class)
 class MeasurementKafkaIntegrationTest {
 
   @Autowired private MeasurementProducer measurementProducer;
@@ -44,9 +48,10 @@ class MeasurementKafkaIntegrationTest {
         .atMost(10, TimeUnit.SECONDS)
         .untilAsserted(
             () -> {
-              List<Measurement> stored = measurementRepository.findByDeviceId(device.getId());
-              assertThat(stored).hasSize(1);
-              assertThat(stored.get(0).getPower()).isEqualTo(5.2);
+              Page<Measurement> stored =
+                  measurementRepository.findByDeviceId(device.getId(), PageRequest.of(0, 20));
+              assertThat(stored.getContent()).hasSize(1);
+              assertThat(stored.getContent().get(0).getPower()).isEqualTo(5.2);
             });
   }
 }

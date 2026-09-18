@@ -15,6 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 class DeviceServiceTest {
@@ -48,12 +51,13 @@ class DeviceServiceTest {
   @Test
   void findAll_returnsAllDevicesMappedToResponses() {
     Device device = new Device("Boiler 2", "BOILER", "Building 1", DeviceStatus.ONLINE);
-    when(deviceRepository.findAll()).thenReturn(List.of(device));
+    PageRequest pageable = PageRequest.of(0, 20);
+    when(deviceRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(device)));
 
-    List<DeviceResponse> result = deviceService.findAll();
+    Page<DeviceResponse> result = deviceService.findAll(pageable);
 
-    assertThat(result).hasSize(1);
-    assertThat(result.get(0).name()).isEqualTo("Boiler 2");
+    assertThat(result.getContent()).hasSize(1);
+    assertThat(result.getContent().get(0).name()).isEqualTo("Boiler 2");
   }
 
   @Test

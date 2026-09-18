@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.energyplatform.alert.AlertService;
 import com.energyplatform.common.exception.ResourceNotFoundException;
 import com.energyplatform.device.Device;
 import com.energyplatform.device.DeviceRepository;
@@ -20,6 +21,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 class MeasurementServiceTest {
@@ -27,6 +31,8 @@ class MeasurementServiceTest {
   @Mock private MeasurementRepository measurementRepository;
 
   @Mock private DeviceRepository deviceRepository;
+
+  @Mock private AlertService alertService;
 
   @InjectMocks private MeasurementService measurementService;
 
@@ -62,11 +68,13 @@ class MeasurementServiceTest {
     Device device = new Device("Boiler 2", "BOILER", "Building 1", DeviceStatus.ONLINE);
     Measurement measurement =
         new Measurement(device, LocalDateTime.of(2026, 9, 17, 12, 0), 14.7, 5.2, 230);
-    when(measurementRepository.findByDeviceId(1L)).thenReturn(List.of(measurement));
+    PageRequest pageable = PageRequest.of(0, 20);
+    when(measurementRepository.findByDeviceId(1L, pageable))
+        .thenReturn(new PageImpl<>(List.of(measurement)));
 
-    List<MeasurementResponse> result = measurementService.findByDevice(1L);
+    Page<MeasurementResponse> result = measurementService.findByDevice(1L, pageable);
 
-    assertThat(result).hasSize(1);
-    assertThat(result.get(0).power()).isEqualTo(5.2);
+    assertThat(result.getContent()).hasSize(1);
+    assertThat(result.getContent().get(0).power()).isEqualTo(5.2);
   }
 }
