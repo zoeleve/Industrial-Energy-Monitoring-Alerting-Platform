@@ -1,7 +1,9 @@
 package com.energyplatform.device;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/devices")
+@Tag(name = "Devices")
 public class DeviceController {
 
   private final DeviceService deviceService;
@@ -30,8 +33,8 @@ public class DeviceController {
   }
 
   @GetMapping
-  public List<DeviceResponse> findAll() {
-    return deviceService.findAll();
+  public Page<DeviceResponse> findAll(Pageable pageable) {
+    return deviceService.findAll(pageable);
   }
 
   @GetMapping("/{id}")

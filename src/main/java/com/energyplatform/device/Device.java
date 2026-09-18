@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,6 +35,8 @@ public class Device {
 
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
+
+  @Version private Long version;
 
   protected Device() {
     // required by JPA
@@ -89,5 +92,9 @@ public class Device {
 
   public LocalDateTime getCreatedAt() {
     return createdAt;
+  }
+
+  public Long getVersion() {
+    return version;
   }
 }

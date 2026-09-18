@@ -1,7 +1,8 @@
 package com.energyplatform.device;
 
 import com.energyplatform.common.exception.ResourceNotFoundException;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +24,8 @@ public class DeviceService {
   }
 
   @Transactional(readOnly = true)
-  public List<DeviceResponse> findAll() {
-    return deviceRepository.findAll().stream().map(DeviceResponse::from).toList();
+  public Page<DeviceResponse> findAll(Pageable pageable) {
+    return deviceRepository.findAll(pageable).map(DeviceResponse::from);
   }
 
   @Transactional(readOnly = true)
