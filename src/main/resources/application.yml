@@ -39,3 +39,8 @@ spring:
         spring.json.trusted.packages: com.energyplatform.measurement
         spring.json.value.default.type: com.energyplatform.measurement.MeasurementEvent
         spring.json.use.type.headers: false
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:industrial-energy-platform-dev-secret-key-change-me-1234567890}
+    expiration-ms: 3600000
